@@ -1,0 +1,37 @@
+name: Tests
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+      
+      - name: Compile main program
+        run: gcc -Wall -Wextra src/huffman.c src/main.c -o huffman -I.
+      
+      - name: Generate output files
+        working-directory: tests
+        run: |
+          ../huffman --compress test1.txt test1compressed.huff
+          ../huffman --decompress test1compressed.huff test1restored.txt
+          ../huffman --compress test2.txt test2compressed.huff
+          ../huffman --decompress test2compressed.huff test2restored.txt
+          ../huffman --compress test3.txt test3compressed.huff
+          ../huffman --decompress test3compressed.huff test3restored.txt
+          ../huffman --compress test4russian.txt test4compressed.huff
+          ../huffman --decompress test4compressed.huff test4restored.txt
+          ../huffman --compress test5.txt test5compressed.huff
+          ../huffman --decompress test5compressed.huff test5restored.txt
+      
+      - name: Compile tests
+        run: gcc -Wall -Wextra tests/testHuffman.c src/huffman.c -o test_huffman -I.
+      
+      - name: Run tests
+        run: ./test_huffman
