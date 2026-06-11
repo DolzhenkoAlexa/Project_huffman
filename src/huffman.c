@@ -303,7 +303,7 @@ void compressFile(const char* inputPath, const char* outputPath)
     int ch;
     while ((ch = fgetc(in)) != EOF) {
         const char* code = findCode(root, (unsigned char)ch);
-        for (int i = 0; i < strlen(code); i++) {
+        for (size_t i = 0; i < strlen(code); i++) {
             writeBit(out, code[i] == '0' ? LEFT : RIGHT);
         }
     }
