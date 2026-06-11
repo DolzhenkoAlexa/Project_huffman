@@ -40,7 +40,7 @@ int compareFiles(const char* firstFilePath, const char* secondFilePath)
     return 1;
 }
 
-int testHelloWorld()
+int testHelloWorld(void)
 {
     printf("\nTest 1: Hello world\n");
 
@@ -60,7 +60,7 @@ int testHelloWorld()
     return result;
 }
 
-int testAAAAA()
+int testAAAAA(void)
 {
     printf("\nTest 2: A\n");
 
@@ -80,7 +80,7 @@ int testAAAAA()
     return result;
 }
 
-int testEnglish()
+int testEnglish(void)
 {
     printf("\nTest 3: English\n");
 
@@ -100,7 +100,7 @@ int testEnglish()
     return result;
 }
 
-int testRussian()
+int testRussian(void)
 {
     printf("\nTest 4: Russian\n");
 
@@ -120,7 +120,7 @@ int testRussian()
     return result;
 }
 
-int testLanguages()
+int testLanguages(void)
 {
     printf("\nTest 5: 3 languages\n");
 
@@ -140,14 +140,13 @@ int testLanguages()
     return result;
 }
 
-int main(int argc, char* argv[])
+int main(void)
 {
     printf("Running tests:\n");
-    int testHelloWorld(void);
-    int testAAAAA(void);
-    int testEnglish(void);
-    int testRussian(void);
-    int testLanguages(void);
-
+    testHelloWorld();
+    testAAAAA();
+    testEnglish();
+    testRussian();
+    testLanguages();
     return 0;
 }
