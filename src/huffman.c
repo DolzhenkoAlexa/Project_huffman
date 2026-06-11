@@ -232,7 +232,7 @@ void getFrequencies(const char *path, uint64_t freqs[ALPHABET_SIZE],
 // Сжимает файл
 void compressFile(const char *inputPath, const char *outputPath) {
   uint64_t freqs[ALPHABET_SIZE];
-  uint64_t fileSize;
+  uint64_t fileSize = 0;
   getFrequencies(inputPath, freqs, &fileSize);
 
   if (fileSize == 0) {
@@ -305,7 +305,6 @@ void decompressFile(const char *inputPath, const char *outputPath) {
   FILE *in = fopen(inputPath, "rb");
   if (in == NULL) {
     printf("Error: Cannot open compressed file");
-    fclose(in);
     return;
   }
 
@@ -441,7 +440,7 @@ void decompressFile(const char *inputPath, const char *outputPath) {
     unsigned char remaining = buffer;
     remaining <<= (8 - bitsLeft);
     if (remaining != 0) {
-      fprintf(stderr, "Error: extra non-zero bits were found\n");
+      puts("Error: extra non-zero bits were found");
     }
   }
 
