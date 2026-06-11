@@ -143,11 +143,11 @@ int testLanguages()
 int main(int argc, char* argv[])
 {
     printf("Running tests:\n");
-    int testHelloWorld(void)
-    int testAAAAA(void)
-    int testEnglish(void)
-    int testRussian(void)
-    int testLanguages(void)
+    int testHelloWorld(void);
+    int testAAAAA(void);
+    int testEnglish(void);
+    int testRussian(void);
+    int testLanguages(void);
 
     return 0;
 }
