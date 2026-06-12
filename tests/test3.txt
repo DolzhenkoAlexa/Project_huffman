@@ -1,0 +1,9 @@
+ERROR: Connection failed at 2024-01-15 10:23:45
+INFO: User login successful from IP 192.168.1.100
+WARNING: Disk usage is 85% on /dev/sda1
+ERROR: Timeout while connecting to database
+INFO: Backup completed successfully at 2024-01-15 11:00:00
+DEBUG: Processing request ID 12345
+ERROR: Authentication failed for user 'anonymous'
+INFO: System reboot scheduled for 2024-01-16 02:00:00
+WARNING: High memory usage detected: 4096MB/8192MB
