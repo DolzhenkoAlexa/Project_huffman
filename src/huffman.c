@@ -24,8 +24,6 @@ static void writeBit(FILE* out, int bit)
     bitBuffer = (bitBuffer << 1) | bit;
     bitCount++;
 
-    printf("%d", bit);
-
     if (bitCount == 8) {
         fwrite(&bitBuffer, 1, 1, out);
         bitBuffer = 0;
