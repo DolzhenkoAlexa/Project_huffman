@@ -4,7 +4,8 @@
 #include <string.h>
 
 // Создаёт новый узел дерева
-Node* createNode(unsigned char symbol, uint64_t frequency, Node* left, Node* right) {
+Node* createNode(unsigned char symbol, uint64_t frequency, Node* left, Node* right)
+{
     Node* node = malloc(sizeof(Node));
     if (node == NULL) {
         return NULL;
@@ -17,7 +18,8 @@ Node* createNode(unsigned char symbol, uint64_t frequency, Node* left, Node* rig
     return node;
 }
 
-Node* buildTree(uint64_t frequencyTable[ALPHABET_SIZE]) {
+Node* buildTree(uint64_t frequencyTable[ALPHABET_SIZE])
+{
     Queue queue;
     initQueue(&queue);
 
@@ -70,7 +72,8 @@ Node* buildTree(uint64_t frequencyTable[ALPHABET_SIZE]) {
 }
 
 // Рекурсивно строит коды для всех символов
-static void recursiveCodeBuilding(Node* root, char* code, int depth) {
+static void recursiveCodeBuilding(Node* root, char* code, int depth)
+{
     if (root == NULL) {
         return;
     }
@@ -102,7 +105,8 @@ static void recursiveCodeBuilding(Node* root, char* code, int depth) {
     }
 }
 
-void generateCodes(Node* root) {
+void generateCodes(Node* root)
+{
     if (root == NULL) {
         return;
     }
@@ -115,7 +119,8 @@ void generateCodes(Node* root) {
 }
 
 // Ищет код
-const char* findCode(Node* node, unsigned char symbol) {
+const char* findCode(Node* node, unsigned char symbol)
+{
     if (node == NULL) {
         return NULL;
     }
@@ -133,10 +138,13 @@ const char* findCode(Node* node, unsigned char symbol) {
     return findCode(node->right, symbol);
 }
 
-void freeTree(Node* root) {
-    if (root == NULL) return;
+void freeTree(Node* root)
+{
+    if (root == NULL)
+        return;
     freeTree(root->left);
     freeTree(root->right);
-    if (root->code) free(root->code);
+    if (root->code)
+        free(root->code);
     free(root);
 }

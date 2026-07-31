@@ -1,7 +1,8 @@
 #include "bitOperation.h"
 
 // Создает битовый буфер
-void initBitBuffer(BitBuffer* bitBuffer) {
+void initBitBuffer(BitBuffer* bitBuffer)
+{
     bitBuffer->buffer = 0;
     bitBuffer->count = 0;
 }

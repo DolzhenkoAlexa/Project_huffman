@@ -37,9 +37,17 @@ jobs:
           ../huffman --decompress test4compressed.huff test4restored.txt
           ../huffman --compress test5.txt test5compressed.huff
           ../huffman --decompress test5compressed.huff test5restored.txt
-      
+
       - name: Compile tests
-        run: gcc -Wall -Wextra tests/testHuffman.c src/huffman.c -o test_huffman -I.
+        run: |
+          gcc -Wall -Wextra \
+            tests/testHuffman.c \
+            src/huffman.c \
+            src/huffmanTree.c \
+            src/queue.c \
+            src/bitOperation.c \
+            -o test_huffman \
+            -I.
       
       - name: Run tests
         run: ./test_huffman

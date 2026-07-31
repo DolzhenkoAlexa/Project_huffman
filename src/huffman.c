@@ -1,18 +1,20 @@
 #include "huffman.h"
 #include "bitOperation.h"
 #include "huffmanTree.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdint.h>
 
-void getFrequencies(const char* path, uint64_t frequencyTable[ALPHABET_SIZE], uint64_t* fileSize) {
+void getFrequencies(const char* path, uint64_t frequencyTable[ALPHABET_SIZE], uint64_t* fileSize)
+{
     FILE* f = fopen(path, "rb");
     if (f == NULL) {
         printf("Error: Cannot open file");
         return;
     }
     *fileSize = 0;
-    for (int i = 0; i < ALPHABET_SIZE; i++) frequencyTable[i] = 0;
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+        frequencyTable[i] = 0;
     int ch;
     while ((ch = fgetc(f)) != EOF) {
         frequencyTable[(unsigned char)ch]++;
@@ -22,7 +24,8 @@ void getFrequencies(const char* path, uint64_t frequencyTable[ALPHABET_SIZE], ui
 }
 
 // Сжимает файл
-void compressFile(const char* inputPath, const char* outputPath) {
+void compressFile(const char* inputPath, const char* outputPath)
+{
     uint64_t frequencyTable[ALPHABET_SIZE];
     uint64_t fileSize;
     getFrequencies(inputPath, frequencyTable, &fileSize);
@@ -85,8 +88,7 @@ void compressFile(const char* inputPath, const char* outputPath) {
     for (int i = 0; i < ALPHABET_SIZE; i++) {
         if (frequencyTable[i] > 0) {
             unsigned char symbol = (unsigned char)i;
-            if (fwrite(&symbol, 1, 1, out) != 1 ||
-                fwrite(&frequencyTable[i], sizeof(uint64_t), 1, out) != 1) {
+            if (fwrite(&symbol, 1, 1, out) != 1 || fwrite(&frequencyTable[i], sizeof(uint64_t), 1, out) != 1) {
                 printf("Error: Failed to write frequency data\n");
                 freeTree(root);
                 fclose(in);
@@ -129,7 +131,8 @@ void compressFile(const char* inputPath, const char* outputPath) {
 }
 
 // Распаковка файла
-void decompressFile(const char* inputPath, const char* outputPath) {
+void decompressFile(const char* inputPath, const char* outputPath)
+{
     FILE* in = fopen(inputPath, "rb");
     if (in == NULL) {
         printf("Error: Cannot open compressed file");
@@ -156,7 +159,7 @@ void decompressFile(const char* inputPath, const char* outputPath) {
         return;
     }
     // Восстанавливаем таблицу частот
-    uint64_t frequencyTable[ALPHABET_SIZE] = {0};
+    uint64_t frequencyTable[ALPHABET_SIZE] = { 0 };
     for (int i = 0; i < uniqueSymbols; i++) {
         unsigned char symbol;
         uint64_t frequency;
