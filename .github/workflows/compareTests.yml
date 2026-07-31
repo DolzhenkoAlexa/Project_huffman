@@ -14,7 +14,15 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y build-essential
       
       - name: Compile main program
-        run: gcc -Wall -Wextra src/huffman.c src/main.c -o huffman -I.
+        run: |
+          gcc -Wall -Wextra \
+            src/main.c \
+            src/huffman.c \
+            src/huffmanTree.c \
+            src/priority_queue.c \
+            src/bitOperation.c \
+            -o huffman \
+            -I.
       
       - name: Generate output files
         working-directory: tests
