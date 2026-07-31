@@ -8,7 +8,7 @@ jobs:
   build-and-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       
       - name: Check format
         run: |
@@ -26,4 +26,17 @@ jobs:
       - name: Lint
         run: |
           run-clang-tidy -p=build
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configure
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+      
+      - name: Build
+        run: |
+          cmake --build build --config Release
           
