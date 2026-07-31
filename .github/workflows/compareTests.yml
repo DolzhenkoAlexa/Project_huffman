@@ -19,7 +19,7 @@ jobs:
             src/main.c \
             src/huffman.c \
             src/huffmanTree.c \
-            src/priority_queue.c \
+            src/queue.c \
             src/bitOperation.c \
             -o huffman \
             -I.
