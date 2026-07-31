@@ -1,6 +1,6 @@
 #pragma once
-#include <stdint.h>
 #include "huffmanTree.h"
+#include <stdint.h>
 
 // Направления обхода дерева
 typedef enum {
