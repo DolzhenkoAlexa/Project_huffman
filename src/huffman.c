@@ -27,7 +27,7 @@ void getFrequencies(const char* path, uint64_t frequencyTable[ALPHABET_SIZE], ui
 void compressFile(const char* inputPath, const char* outputPath)
 {
     uint64_t frequencyTable[ALPHABET_SIZE];
-    uint64_t fileSize;
+    uint64_t fileSize = 0;
     getFrequencies(inputPath, frequencyTable, &fileSize);
 
     if (fileSize == 0) {

@@ -23,7 +23,7 @@ Node* buildTree(uint64_t frequencyTable[ALPHABET_SIZE]);
 void generateCodes(Node* root);
 
 // Ищет код для символа
-const char* findCode(Node* root, unsigned char symbol);
+const char* findCode(Node* node, unsigned char symbol);
 
 // Освобождает память дерева
 void freeTree(Node* root);
