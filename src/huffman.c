@@ -124,7 +124,8 @@ int compressFile(const char* inputPath, const char* outputPath)
             return -2;
         }
         for (size_t i = 0; i < strlen(code); i++) {
-            result = writeBit(out, bitBuf, code[i] == '0' ? LEFT : RIGHT);
+            // 0 = Left,  1 = Right
+            result = writeBit(out, bitBuf, code[i] == '0' ? 0 : 1);
             if (result != 0) {
                 freeTree(root);
                 fclose(in);
@@ -266,5 +267,6 @@ int decompressFile(const char* inputPath, const char* outputPath)
     fclose(in);
     fclose(out);
     freeTree(root);
+    destroyBitBuffer(bitBuf);
     return 0;
 }
