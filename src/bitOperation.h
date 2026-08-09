@@ -2,20 +2,20 @@
 
 #include <stdio.h>
 
-// Структура для битового буфера
-typedef struct {
-    unsigned char buffer;
-    int count;
-} BitBuffer;
+typedef struct BitBuffer BitBuffer;
+
+// Создает и уничтожает битовый буфер
+BitBuffer* createBitBuffer(void);
+void destroyBitBuffer(BitBuffer* bitBuffer);
 
 // Записывает один бит в файл
-void writeBit(FILE* outputFile, BitBuffer* bitBuffer, int bitValue);
+int writeBit(FILE* outputFile, BitBuffer* bitBuffer, int bitValue);
 
 // Записывает оставшиеся биты в файл
-void flushBits(FILE* outputFile, BitBuffer* bitBuffer);
+int flushBits(FILE* outputFile, BitBuffer* bitBuffer);
 
 // Читает один бит из файла
 int readBit(FILE* inputFile, BitBuffer* bitBuffer);
 
-// Создает битовый буфер
-void initBitBuffer(BitBuffer* bitBuffer);
+// Проверяет остаточные биты и возвращает их значение
+int getRemainingBits(const BitBuffer* bitBuffer, unsigned char* remaining);

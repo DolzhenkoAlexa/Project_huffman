@@ -5,12 +5,11 @@
 #include <stdio.h>
 #include <string.h>
 
-void getFrequencies(const char* path, uint64_t frequencyTable[ALPHABET_SIZE], uint64_t* fileSize)
+int getFrequencies(const char* path, uint64_t frequencyTable[ALPHABET_SIZE], uint64_t* fileSize)
 {
     FILE* f = fopen(path, "rb");
     if (f == NULL) {
-        printf("Error: Cannot open file");
-        return;
+        return -1;
     }
     *fileSize = 0;
     for (int i = 0; i < ALPHABET_SIZE; i++)
@@ -21,54 +20,55 @@ void getFrequencies(const char* path, uint64_t frequencyTable[ALPHABET_SIZE], ui
         (*fileSize)++;
     }
     fclose(f);
+    return 0;
 }
 
-// Сжимает файл
-void compressFile(const char* inputPath, const char* outputPath)
+int compressFile(const char* inputPath, const char* outputPath)
 {
     uint64_t frequencyTable[ALPHABET_SIZE];
     uint64_t fileSize = 0;
-    getFrequencies(inputPath, frequencyTable, &fileSize);
+
+    int result = getFrequencies(inputPath, frequencyTable, &fileSize);
+    if (result != 0) {
+        return result;
+    }
 
     if (fileSize == 0) {
         FILE* out = fopen(outputPath, "wb");
         if (out != NULL) {
             fclose(out);
         }
-        return;
+        return 0;
     }
 
     FILE* in = fopen(inputPath, "rb");
     if (in == NULL) {
-        printf("Error: Cannot open input file\n");
-        return;
+        return -1;
     }
 
     FILE* out = fopen(outputPath, "wb");
     if (out == NULL) {
-        printf("Error: Cannot create output file\n");
         fclose(in);
-        return;
+        return -1;
     }
 
     Node* root = buildTree(frequencyTable);
     if (root == NULL) {
-        printf("Error: Failed to build Huffman tree\n");
         fclose(in);
         fclose(out);
-        return;
+        return -2;
     }
 
     generateCodes(root);
 
     uint8_t marker = 0xFF;
     if (fwrite(&marker, 1, 1, out) != 1) {
-        printf("Error: Failed to write marker\n");
         freeTree(root);
         fclose(in);
         fclose(out);
-        return;
+        return -3;
     }
+
     // Подсчитываем количество уникальных символов в файле
     int uniqueSymbols = 0;
     for (int i = 0; i < ALPHABET_SIZE; i++) {
@@ -78,86 +78,104 @@ void compressFile(const char* inputPath, const char* outputPath)
     }
 
     if (fwrite(&uniqueSymbols, sizeof(int), 1, out) != 1) {
-        printf("Error: Failed to write unique symbols count\n");
         freeTree(root);
         fclose(in);
         fclose(out);
-        return;
+        return -3;
     }
+
     // Таблица частот
     for (int i = 0; i < ALPHABET_SIZE; i++) {
         if (frequencyTable[i] > 0) {
             unsigned char symbol = (unsigned char)i;
             if (fwrite(&symbol, 1, 1, out) != 1 || fwrite(&frequencyTable[i], sizeof(uint64_t), 1, out) != 1) {
-                printf("Error: Failed to write frequency data\n");
                 freeTree(root);
                 fclose(in);
                 fclose(out);
-                return;
+                return -3;
             }
         }
     }
+
     // Записываем размер исходного файла
     if (fwrite(&fileSize, sizeof(uint64_t), 1, out) != 1) {
-        printf("Error: Failed to write file size\n");
         freeTree(root);
         fclose(in);
         fclose(out);
-        return;
+        return -3;
     }
 
-    BitBuffer bitBuf;
-    initBitBuffer(&bitBuf);
+    BitBuffer* bitBuf = createBitBuffer();
+    if (bitBuf == NULL) {
+        freeTree(root);
+        fclose(in);
+        fclose(out);
+        return -2;
+    }
 
     int ch;
     while ((ch = fgetc(in)) != EOF) {
         const char* code = findCode(root, (unsigned char)ch);
         if (code == NULL) {
-            printf("Error: Code not found for symbol\n");
             freeTree(root);
             fclose(in);
             fclose(out);
-            return;
+            destroyBitBuffer(bitBuf);
+            return -2;
         }
         for (size_t i = 0; i < strlen(code); i++) {
-            writeBit(out, &bitBuf, code[i] == '0' ? LEFT : RIGHT);
+            result = writeBit(out, bitBuf, code[i] == '0' ? LEFT : RIGHT);
+            if (result != 0) {
+                freeTree(root);
+                fclose(in);
+                fclose(out);
+                destroyBitBuffer(bitBuf);
+                return result;
+            }
         }
     }
-    flushBits(out, &bitBuf);
+
+    result = flushBits(out, bitBuf);
+    if (result != 0) {
+        freeTree(root);
+        fclose(in);
+        fclose(out);
+        destroyBitBuffer(bitBuf);
+        return result;
+    }
+
+    destroyBitBuffer(bitBuf);
 
     fclose(in);
     fclose(out);
     freeTree(root);
+    return 0;
 }
 
-// Распаковка файла
-void decompressFile(const char* inputPath, const char* outputPath)
+int decompressFile(const char* inputPath, const char* outputPath)
 {
     FILE* in = fopen(inputPath, "rb");
     if (in == NULL) {
-        printf("Error: Cannot open compressed file");
-        return;
+        return -1;
     }
 
     uint8_t marker;
     if (fread(&marker, sizeof(uint8_t), 1, in) != 1) {
-        printf("Error: Failed to read marker\n");
         fclose(in);
-        return;
+        return -1;
     }
 
     if (marker != 0xFF) {
-        printf("Error: Invalid format (expected 0xFF, got 0x%02X)\n", marker);
         fclose(in);
-        return;
+        return -1;
     }
 
     int uniqueSymbols;
     if (fread(&uniqueSymbols, sizeof(int), 1, in) != 1) {
-        printf("Error: Failed to read number of unique symbols\n");
         fclose(in);
-        return;
+        return -1;
     }
+
     // Восстанавливаем таблицу частот
     uint64_t frequencyTable[ALPHABET_SIZE] = { 0 };
     for (int i = 0; i < uniqueSymbols; i++) {
@@ -165,15 +183,13 @@ void decompressFile(const char* inputPath, const char* outputPath)
         uint64_t frequency;
 
         if (fread(&symbol, 1, 1, in) != 1) {
-            printf("Error: Failed to read symbol\n");
             fclose(in);
-            return;
+            return -1;
         }
 
         if (fread(&frequency, sizeof(uint64_t), 1, in) != 1) {
-            printf("Error: Failed to read frequency\n");
             fclose(in);
-            return;
+            return -1;
         }
 
         frequencyTable[symbol] = frequency;
@@ -181,69 +197,67 @@ void decompressFile(const char* inputPath, const char* outputPath)
 
     uint64_t originalSize;
     if (fread(&originalSize, sizeof(uint64_t), 1, in) != 1) {
-        printf("Error: Failed to read file size\n");
         fclose(in);
-        return;
+        return -1;
     }
 
     Node* root = buildTree(frequencyTable);
     if (root == NULL) {
-        printf("Error: Failed to build Huffman tree\n");
         fclose(in);
-        return;
+        return -2;
     }
 
     FILE* out = fopen(outputPath, "wb");
     if (out == NULL) {
-        printf("Error: Cannot create output file\n");
         fclose(in);
         freeTree(root);
-        return;
+        return -1;
     }
 
-    BitBuffer bitBuf;
-    initBitBuffer(&bitBuf);
+    BitBuffer* bitBuf = createBitBuffer();
+    if (bitBuf == NULL) {
+        fclose(in);
+        freeTree(root);
+        fclose(out);
+        return -2;
+    }
 
     Node* current = root;
     uint64_t decodedBytes = 0;
 
     while (decodedBytes < originalSize) {
-        int bit = readBit(in, &bitBuf);
+        int bit = readBit(in, bitBuf);
         if (bit == -1) {
-            printf("Error: Unexpected end of file\n");
             break;
         }
 
-        if (bit == LEFT) {
-            if (current->left)
-                current = current->left;
-            else {
-                printf("Error: invalid bit sequence\n");
-                break;
-            }
-        } else if (bit == RIGHT) {
-            if (current->right)
-                current = current->right;
-            else {
-                printf("Error: invalid bit sequence\n");
-                break;
-            }
-        }
+        unsigned char symbol;
+        int status = decodeSymbol(&current, bit, &symbol);
 
-        // Если достигли листа записываем символ
-        if (current->left == NULL && current->right == NULL) {
-            if (fputc(current->symbol, out) == EOF) {
-                printf("Error: Failed to write output file\n");
-                break;
+        if (status == -3) {
+            // Битовая последовательность не соответствует дереву
+            fclose(in);
+            fclose(out);
+            freeTree(root);
+            destroyBitBuffer(bitBuf);
+            return -3;
+        } else if (status == 1) {
+            // Символ получен
+            if (fputc(symbol, out) == EOF) {
+                fclose(in);
+                fclose(out);
+                freeTree(root);
+                destroyBitBuffer(bitBuf);
+                return -3;
             }
             decodedBytes++;
-            current = root; // Возвращаемся к корню для следующего символа
+            current = root; // Возврат к корню для следующего символа
         }
+        // Продолжаем читать биты
     }
-    // Проверяем, не осталось ли лишних битов
-    if (bitBuf.count > 0) {
-        unsigned char remaining = bitBuf.buffer;
-        remaining <<= (8 - bitBuf.count);
+
+    unsigned char remaining;
+    if (getRemainingBits(bitBuf, &remaining) > 0) {
         if (remaining != 0) {
             puts("Warning: extra non-zero bits were found");
         }
@@ -252,4 +266,5 @@ void decompressFile(const char* inputPath, const char* outputPath)
     fclose(in);
     fclose(out);
     freeTree(root);
+    return 0;
 }

@@ -4,7 +4,7 @@
 #define QUEUE_SIZE 512
 
 // Структура для очереди с приоритетом
-typedef struct {
+typedef struct Queue {
     Node* nodes[QUEUE_SIZE];
     int size;
 } Queue;

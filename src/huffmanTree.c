@@ -1,9 +1,17 @@
 #include "huffmanTree.h"
+#include "huffman.h"
 #include "queue.h"
 #include <stdlib.h>
 #include <string.h>
 
-// Создаёт новый узел дерева
+struct Node {
+    unsigned char symbol;
+    uint64_t frequency;
+    char* code;
+    struct Node* left;
+    struct Node* right;
+};
+
 Node* createNode(unsigned char symbol, uint64_t frequency, Node* left, Node* right)
 {
     Node* node = malloc(sizeof(Node));
@@ -72,16 +80,16 @@ Node* buildTree(uint64_t frequencyTable[ALPHABET_SIZE])
 }
 
 // Рекурсивно строит коды для всех символов
-static void recursiveCodeBuilding(Node* root, char* code, int depth)
+static int recursiveCodeBuilding(Node* root, char* code, int depth)
 {
     if (root == NULL) {
-        return;
+        return 0;
     }
 
     if (root->left == NULL && root->right == NULL) {
         root->code = (char*)malloc(depth + 1);
         if (root->code == NULL) {
-            return;
+            return -2;
         }
         if (depth == 0) {
             root->code[0] = '0';
@@ -90,35 +98,43 @@ static void recursiveCodeBuilding(Node* root, char* code, int depth)
             memcpy(root->code, code, depth);
             root->code[depth] = '\0';
         }
-        return;
+        return 0;
     }
 
     // Идём налево и дописываем 0
     if (root->left) {
         code[depth] = '0';
-        recursiveCodeBuilding(root->left, code, depth + 1);
+        int result = recursiveCodeBuilding(root->left, code, depth + 1);
+        if (result != 0) {
+            return result;
+        }
     }
-    // Идём налево и дописываем 1
+    // Идём направо и дописываем 1
     if (root->right) {
         code[depth] = '1';
-        recursiveCodeBuilding(root->right, code, depth + 1);
+        int result = recursiveCodeBuilding(root->right, code, depth + 1);
+        if (result != 0) {
+            return result;
+        }
     }
+
+    return 0;
 }
 
-void generateCodes(Node* root)
+int generateCodes(Node* root)
 {
     if (root == NULL) {
-        return;
+        return 0;
     }
     char* buffer = malloc(ALPHABET_SIZE * sizeof(char));
     if (buffer == NULL) {
-        return;
+        return -2;
     }
-    recursiveCodeBuilding(root, buffer, 0);
+    int result = recursiveCodeBuilding(root, buffer, 0);
     free(buffer);
+    return result;
 }
 
-// Ищет код
 const char* findCode(Node* node, unsigned char symbol)
 {
     if (node == NULL) {
@@ -144,7 +160,33 @@ void freeTree(Node* root)
         return;
     freeTree(root->left);
     freeTree(root->right);
-    if (root->code)
-        free(root->code);
     free(root);
+}
+
+uint64_t getNodeFrequency(const Node* node)
+{
+    return node->frequency;
+}
+
+int decodeSymbol(Node** current, int bit, unsigned char* symbol)
+{
+    Node* node = *current;
+
+    if (bit == LEFT) {
+        if (node->left == NULL)
+            return -3; // нет левого ребенка
+        *current = node->left;
+    } else if (bit == RIGHT) {
+        if (node->right == NULL)
+            return -3; // нет правого ребенка
+        *current = node->right;
+    }
+
+    node = *current;
+    if (node->left == NULL && node->right == NULL) {
+        *symbol = node->symbol;
+        return 1; // Получили символ
+    }
+
+    return 0; // Продолжаем читать биты
 }

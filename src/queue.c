@@ -14,7 +14,7 @@ static void heapUp(Queue* q, int index)
 {
     while (index > 0) {
         int parent = (index - 1) / 2;
-        if (q->nodes[parent]->frequency <= q->nodes[index]->frequency)
+        if (getNodeFrequency(q->nodes[parent]) <= getNodeFrequency(q->nodes[index]))
             break;
         swapNodes(&q->nodes[parent], &q->nodes[index]);
         index = parent;
@@ -29,9 +29,9 @@ static void heapDown(Queue* q, int index)
         int right = 2 * index + 2;
         int smallest = index;
 
-        if (left < q->size && q->nodes[left]->frequency < q->nodes[smallest]->frequency)
+        if (left < q->size && getNodeFrequency(q->nodes[left]) < getNodeFrequency(q->nodes[smallest]))
             smallest = left;
-        if (right < q->size && q->nodes[right]->frequency < q->nodes[smallest]->frequency)
+        if (right < q->size && getNodeFrequency(q->nodes[right]) < getNodeFrequency(q->nodes[smallest]))
             smallest = right;
 
         if (smallest == index)

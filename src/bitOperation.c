@@ -1,37 +1,55 @@
 #include "bitOperation.h"
+#include <stdlib.h>
 
-// Создает битовый буфер
-void initBitBuffer(BitBuffer* bitBuffer)
+struct BitBuffer {
+    unsigned char buffer;
+    int count;
+};
+
+BitBuffer* createBitBuffer(void)
 {
+    BitBuffer* bitBuffer = malloc(sizeof(BitBuffer));
+    if (bitBuffer == NULL) {
+        return NULL;
+    }
     bitBuffer->buffer = 0;
     bitBuffer->count = 0;
+    return bitBuffer;
 }
 
-// Записывает один бит в файл, накапливая их в байт
-void writeBit(FILE* outputFile, BitBuffer* bitBuffer, int bitValue)
+void destroyBitBuffer(BitBuffer* bitBuffer)
+{
+    free(bitBuffer);
+}
+
+int writeBit(FILE* outputFile, BitBuffer* bitBuffer, int bitValue)
 {
     bitBuffer->buffer = (bitBuffer->buffer << 1) | bitValue;
     bitBuffer->count++;
 
     if (bitBuffer->count == 8) {
-        fwrite(&bitBuffer->buffer, 1, 1, outputFile);
+        if (fwrite(&bitBuffer->buffer, 1, 1, outputFile) != 1) {
+            return -3;
+        }
         bitBuffer->buffer = 0;
         bitBuffer->count = 0;
     }
+    return 0;
 }
 
-// Записывает оставшиеся биты в файл (добив нулями до байта)
-void flushBits(FILE* outputFile, BitBuffer* bitBuffer)
+int flushBits(FILE* outputFile, BitBuffer* bitBuffer)
 {
     if (bitBuffer->count > 0) {
         bitBuffer->buffer <<= (8 - bitBuffer->count);
-        fwrite(&bitBuffer->buffer, 1, 1, outputFile);
+        if (fwrite(&bitBuffer->buffer, 1, 1, outputFile) != 1) {
+            return -3;
+        }
         bitBuffer->buffer = 0;
         bitBuffer->count = 0;
     }
+    return 0;
 }
 
-// Читает один бит из файла
 int readBit(FILE* inputFile, BitBuffer* bitBuffer)
 {
     if (bitBuffer->count == 0) {
@@ -43,4 +61,13 @@ int readBit(FILE* inputFile, BitBuffer* bitBuffer)
     bitBuffer->buffer <<= 1;
     bitBuffer->count--;
     return bitValue;
+}
+
+int getRemainingBits(const BitBuffer* bitBuffer, unsigned char* remaining)
+{
+    if (bitBuffer->count == 0) {
+        return 0;
+    }
+    *remaining = bitBuffer->buffer << (8 - bitBuffer->count);
+    return bitBuffer->count;
 }
