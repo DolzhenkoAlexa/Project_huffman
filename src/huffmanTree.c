@@ -171,12 +171,12 @@ uint64_t getNodeFrequency(const Node* node)
 int decodeSymbol(Node** current, int bit, unsigned char* symbol)
 {
     Node* node = *current;
-
-    if (bit == LEFT) {
+    // 0 = Left,  1 = Right
+    if (bit == 0) {
         if (node->left == NULL)
             return -3; // нет левого ребенка
         *current = node->left;
-    } else if (bit == RIGHT) {
+    } else if (bit == 1) {
         if (node->right == NULL)
             return -3; // нет правого ребенка
         *current = node->right;
