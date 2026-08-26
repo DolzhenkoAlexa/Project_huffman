@@ -3,6 +3,9 @@
 
 #define QUEUE_SIZE 512
 
+// Структура для очереди с приоритетом
+typedef struct Queue Queue;
+
 // Инициализирует очередь
 void initQueue(Queue* queue);
 
