@@ -80,7 +80,7 @@ Node* buildTree(uint64_t frequencyTable[ALPHABET_SIZE])
 }
 
 // Рекурсивно строит коды для всех символов
-static int recursiveCodeBuilding(Node* root, char* code, int depth)
+static int buildCodeRecursive(Node* root, char* code, int depth)
 {
     if (root == NULL) {
         return 0;
@@ -104,7 +104,7 @@ static int recursiveCodeBuilding(Node* root, char* code, int depth)
     // Идём налево и дописываем 0
     if (root->left) {
         code[depth] = '0';
-        int result = recursiveCodeBuilding(root->left, code, depth + 1);
+        int result = buildCodeRecursive(root->left, code, depth + 1);
         if (result != 0) {
             return result;
         }
@@ -112,7 +112,7 @@ static int recursiveCodeBuilding(Node* root, char* code, int depth)
     // Идём направо и дописываем 1
     if (root->right) {
         code[depth] = '1';
-        int result = recursiveCodeBuilding(root->right, code, depth + 1);
+        int result = buildCodeRecursive(root->right, code, depth + 1);
         if (result != 0) {
             return result;
         }
@@ -130,7 +130,7 @@ int generateCodes(Node* root)
     if (buffer == NULL) {
         return -2;
     }
-    int result = recursiveCodeBuilding(root, buffer, 0);
+    int result = buildCodeRecursive(root, buffer, 0);
     free(buffer);
     return result;
 }
@@ -174,19 +174,22 @@ int decodeSymbol(Node** current, int bit, unsigned char* symbol)
     // 0 = Left,  1 = Right
     if (bit == 0) {
         if (node->left == NULL)
-            return -3; // нет левого ребенка
+            // нет левого ребенка
+            return -3;
         *current = node->left;
     } else if (bit == 1) {
         if (node->right == NULL)
-            return -3; // нет правого ребенка
+            // нет правого ребенка
+            return -3;
         *current = node->right;
     }
 
     node = *current;
     if (node->left == NULL && node->right == NULL) {
         *symbol = node->symbol;
-        return 1; // Получили символ
+        // Получили символ
+        return 1;
     }
-
-    return 0; // Продолжаем читать биты
+    // Продолжаем читать биты
+    return 0;
 }

@@ -252,7 +252,8 @@ int decompressFile(const char* inputPath, const char* outputPath)
                 return -3;
             }
             decodedBytes++;
-            current = root; // Возврат к корню для следующего символа
+            // Возврат к корню для следующего символа
+            current = root;
         }
         // Продолжаем читать биты
     }

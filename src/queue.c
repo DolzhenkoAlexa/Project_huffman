@@ -1,6 +1,12 @@
 #include "queue.h"
 #include <stdlib.h>
 
+// Структура для очереди с приоритетом (определена ТОЛЬКО здесь)
+struct Queue {
+    Node* nodes[QUEUE_SIZE];
+    int size;
+};
+
 // Обмен узлов
 static void swapNodes(Node** first, Node** second)
 {
@@ -10,7 +16,7 @@ static void swapNodes(Node** first, Node** second)
 }
 
 // Поднятие элемента вверх
-static void heapUp(Queue* q, int index)
+static void heapUp(struct Queue* q, int index)
 {
     while (index > 0) {
         int parent = (index - 1) / 2;
@@ -22,7 +28,7 @@ static void heapUp(Queue* q, int index)
 }
 
 // Опускание элемента вниз
-static void heapDown(Queue* q, int index)
+static void heapDown(struct Queue* q, int index)
 {
     while (1) {
         int left = 2 * index + 1;
@@ -66,7 +72,7 @@ Node* dequeue(Queue* q)
     return result;
 }
 
-int isEmpty(Queue* q)
+int isQueueEmpty(Queue* q)
 {
     return q->size == 0;
 }
@@ -74,11 +80,6 @@ int isEmpty(Queue* q)
 int getQueueSize(Queue* q)
 {
     return q->size;
-}
-
-int isQueueEmpty(Queue* q)
-{
-    return q->size == 0;
 }
 
 void freeQueue(Queue* q)

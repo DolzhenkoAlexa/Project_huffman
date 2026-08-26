@@ -8,12 +8,7 @@ struct BitBuffer {
 
 BitBuffer* createBitBuffer(void)
 {
-    BitBuffer* bitBuffer = malloc(sizeof(BitBuffer));
-    if (bitBuffer == NULL) {
-        return NULL;
-    }
-    bitBuffer->buffer = 0;
-    bitBuffer->count = 0;
+    BitBuffer* bitBuffer = calloc(1, sizeof(BitBuffer));
     return bitBuffer;
 }
 

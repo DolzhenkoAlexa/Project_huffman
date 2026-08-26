@@ -4,8 +4,10 @@
 
 typedef struct BitBuffer BitBuffer;
 
-// Создает и уничтожает битовый буфер
+// Создает битовый буфер
 BitBuffer* createBitBuffer(void);
+
+// Уничтожает битовый буфер
 void destroyBitBuffer(BitBuffer* bitBuffer);
 
 // Записывает один бит в файл
