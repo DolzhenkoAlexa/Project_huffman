@@ -21,8 +21,10 @@ int compareFiles(const char* firstFilePath, const char* secondFilePath)
     FILE* secondFile = fopen(secondFilePath, "rb");
 
     if (!firstFile || !secondFile) {
-        if (firstFile) fclose(firstFile);
-        if (secondFile) fclose(secondFile);
+        if (firstFile)
+            fclose(firstFile);
+        if (secondFile)
+            fclose(secondFile);
         return 0;
     }
 
