@@ -78,7 +78,7 @@ void testCompression(const char* inputFile, const char* compressedFile, const ch
     }
 
     if (compressedSize > 0) {
-        double compressionRatio = (double)compressedSize / originalSize * 100;
+        double compressionRatio = (double)compressedSize / (double)originalSize * 100;
         double savedPercent = 100 - compressionRatio;
 
         printf("Compression ratio: %.2f%% (of original)\n", compressionRatio);
@@ -96,7 +96,7 @@ void testCompression(const char* inputFile, const char* compressedFile, const ch
     }
 }
 
-int testHelloWorld()
+int testHelloWorld(void)
 {
     const char* inputFile = "tests/test1.txt";
     const char* compressedFile = "tests/test1compressed.huff";
@@ -105,7 +105,7 @@ int testHelloWorld()
     return 1;
 }
 
-int testAAAAA()
+int testAAAAA(void)
 {
     const char* inputFile = "tests/test2.txt";
     const char* compressedFile = "tests/test2compressed.huff";
@@ -114,7 +114,7 @@ int testAAAAA()
     return 1;
 }
 
-int testEnglish()
+int testEnglish(void)
 {
     const char* inputFile = "tests/test3.txt";
     const char* compressedFile = "tests/test3compressed.huff";
@@ -123,7 +123,7 @@ int testEnglish()
     return 1;
 }
 
-int testRussian()
+int testRussian(void)
 {
     const char* inputFile = "tests/test4.txt";
     const char* compressedFile = "tests/test4compressed.huff";
@@ -132,7 +132,7 @@ int testRussian()
     return 1;
 }
 
-int testLanguages()
+int testLanguages(void)
 {
     const char* inputFile = "tests/test5.txt";
     const char* compressedFile = "tests/test5compressed.huff";
