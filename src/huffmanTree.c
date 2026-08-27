@@ -28,8 +28,10 @@ Node* createNode(unsigned char symbol, uint64_t frequency, Node* left, Node* rig
 
 Node* buildTree(uint64_t frequencyTable[ALPHABET_SIZE])
 {
-    Queue queue;
-    initQueue(&queue);
+    Queue* queue = createQueue();
+    if (queue == NULL) {
+        return NULL;
+    }
 
     // Создаем листья для всех символов с ненулевой частотой
     for (int i = 0; i < ALPHABET_SIZE; i++) {
@@ -37,32 +39,35 @@ Node* buildTree(uint64_t frequencyTable[ALPHABET_SIZE])
             unsigned char symbol = (unsigned char)i;
             Node* leaf = createNode(symbol, frequencyTable[i], NULL, NULL);
             if (leaf == NULL) {
-                freeQueue(&queue);
+                freeQueue(queue);
                 return NULL;
             }
-            enqueue(&queue, leaf);
+            enqueue(queue, leaf);
         }
     }
 
-    if (isQueueEmpty(&queue)) {
+    if (isQueueEmpty(queue)) {
+        freeQueue(queue);
         return NULL;
     }
 
     // Если только один символ, создает фиктивный родительский узел
-    if (getQueueSize(&queue) == 1) {
-        Node* leaf = dequeue(&queue);
+    if (getQueueSize(queue) == 1) {
+        Node* leaf = dequeue(queue);
         Node* parent = createNode(0, leaf->frequency, leaf, NULL);
         if (parent == NULL) {
             freeTree(leaf);
+            freeQueue(queue);
             return NULL;
         }
+        freeQueue(queue);
         return parent;
     }
 
     // Строим дерево
-    while (getQueueSize(&queue) > 1) {
-        Node* left = dequeue(&queue);
-        Node* right = dequeue(&queue);
+    while (getQueueSize(queue) > 1) {
+        Node* left = dequeue(queue);
+        Node* right = dequeue(queue);
 
         uint64_t newFrequency = left->frequency + right->frequency;
         Node* parent = createNode(0, newFrequency, left, right);
@@ -70,13 +75,15 @@ Node* buildTree(uint64_t frequencyTable[ALPHABET_SIZE])
         if (parent == NULL) {
             freeTree(left);
             freeTree(right);
-            freeQueue(&queue);
+            freeQueue(queue);
             return NULL;
         }
-        enqueue(&queue, parent);
+        enqueue(queue, parent);
     }
 
-    return dequeue(&queue);
+    Node* result = dequeue(queue);
+    freeQueue(queue);
+    return result;
 }
 
 // Рекурсивно строит коды для всех символов
@@ -160,6 +167,9 @@ void freeTree(Node* root)
         return;
     freeTree(root->left);
     freeTree(root->right);
+    if (root->code) {
+        free(root->code);
+    }
     free(root);
 }
 

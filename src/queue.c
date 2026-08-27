@@ -1,7 +1,7 @@
 #include "queue.h"
 #include <stdlib.h>
 
-// Структура для очереди с приоритетом (определена ТОЛЬКО здесь)
+// Структура для очереди с приоритетом
 struct Queue {
     Node* nodes[QUEUE_SIZE];
     int size;
@@ -47,6 +47,17 @@ static void heapDown(struct Queue* q, int index)
     }
 }
 
+// Создает очередь в куче
+Queue* createQueue(void)
+{
+    Queue* q = malloc(sizeof(struct Queue));
+    if (q == NULL) {
+        return NULL;
+    }
+    q->size = 0;
+    return q;
+}
+
 void initQueue(Queue* q)
 {
     q->size = 0;
@@ -88,4 +99,5 @@ void freeQueue(Queue* q)
         Node* node = dequeue(q);
         freeTree(node);
     }
+    free(q);
 }
