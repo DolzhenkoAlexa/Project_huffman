@@ -1,1 +1,25 @@
 Привет, мир. Hello, world. 你好和
+Это тестовый текст на русском
+This is a text for testing in English
+这是个用英语测试的文本 честно говоря, я не уверена в правильности перевода. Надеюсь, что гугл переводчик перевел адекватно
+
+Русский язык использует кириллицу, а английский латиницу. The Russian language uses Cyrillic, while English uses Latin.
+Иногда полезно добавлять короткие связки между абзацами — они делают чтение более плавным и естественным.
+Добавляем строки, чтобы увеличить объём. Repeating lines to increase the volume.
+Ещё одна строка на русском языке. Another line in English language.
+Длинные предложения помогают занять больше места. Long sentences help take up more space.
+Для равномерного распределения символов стоит чередовать языки не только между строками, но и внутри них, когда это уместно по смыслу.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Иногда полезно вставлять небольшие замечания в скобках (например, уточнения или альтернативные формулировки) — они разнообразят структуру текста и создают дополнительный ритм при чтении.
+Cлучайные слова: компьютер, программа, алгоритм, данные, сервер, сеть, интерфейс, пользователь, разработчик, тестировщик. Random words: computer, program, algorithm, data, server, network, interface, user, developer, tester.
+Красный, оранжевый, жёлтый, зелёный, голубой, синий, фиолетовый. Red, orange, yellow, green, cyan, blue, purple. Белый, серый, чёрный, коричневый, розовый, золотой, серебряный. White, grey, black, brown, pink, gold, silver.
+Зима: декабрь, январь, февраль. Winter: December,   q1January, February. Весна: март, апрель, май. Spring: March, April, May.
+Лето: июнь, июль, август. Summer: June, July, August. Осень: сентябрь, октябрь, ноябрь. Autumn: September, October, November.
+Можно также добавить пару чисел в разных форматах: 42, 3.14, 255, 1024, а также даты — 2024-01-15, 15/01/2024 или даже 15 января 2024 года.
+Один два три четыре пять. One two three four five. Пять четыре три два один. Five four three two one.
+Квадрат числа 1 равен 1. The square of 1 is 1. Квадрат числа 2 равен 4. The square of 2 is 4.
+Ещё порция текста для веса. Another portion of text for weight.
+Завершающий абзац на двух языках. Final paragraph in two languages.
+Конец тестового файла. End of test file.
+Хорошего дня. Have a nice day. 拜拜
+Конец тестового файла. End of test file. 再见.
